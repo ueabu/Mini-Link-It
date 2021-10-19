@@ -1,30 +1,213 @@
-import React, { Component } from "react";
+import React from "react";
+import { nanoid } from 'nanoid'
+import { getDatabase, child, ref, set, get } from "firebase/database";
+import { isWebUri } from 'valid-url';
 
-export default class Form extends Component {
+
+class Form extends React.Component {
+
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            longURL: '',
+            preferedAlias: '',
+            generatedURL: '',
+            loading: false,
+            errors: [],
+            errorMessage: {}
+        };
+
+    }
+
+    //When the user clicks submit, this will be called
+    onSubmit = async (event) => {
+        event.preventDefault(); //Prevents the page from reloading when submit is clicked
+        this.setState({
+            loading: true,
+            generatedURL: ''
+        })
+
+        // Validate the input the user has sumbitted
+        var isFormValid = await this.validateInput()
+        if (!isFormValid) {
+            return
+        }
+
+        //If the user has input a prefered alias then we use it, if not, we generate one
+        var generatedKey = nanoid(5);
+        console.log("The generated key is " + generatedKey)
+        var generatedURL = "minilinkit.com/" + generatedKey
+
+        if (this.state.preferedAlias !== '') {
+            generatedKey = this.state.preferedAlias
+            generatedURL = "minilinkit.com/" + this.state.preferedAlias
+        }
+
+        const db = getDatabase();
+        set(ref(db, '/' + generatedKey), {
+
+            generatedKey: generatedKey,
+            longURL: this.state.longURL,
+            preferedAlias: this.state.preferedAlias,
+            generatedURL: generatedURL
+
+        }).then((result) => {
+            this.setState({
+                generatedURL: generatedURL,
+                loading: false
+            })
+        }).catch((e) => {
+
+        })
+    };
+
+    hasError = (key) => {
+        return this.state.errors.indexOf(key) !== -1;
+    }
+
+
+    //Save the content of the form as the user is typing!
+    handleChange = (e) => {
+        const { id, value } = e.target
+        this.setState(prevState => ({
+            ...prevState,
+            [id]: value
+        }))
+    }
+
+    validateInput = async () => {
+        var errors = [];
+        var errorMessages = this.state.errorMessage
+        if (this.state.longURL.length === 0) {
+            errors.push("longURL");
+            errorMessages['longURL'] = 'Please enter your URL!';
+        } else if (!isWebUri(this.state.longURL)) {
+            errors.push("longURL");
+            errorMessages['longURL'] = 'Please a URL in the form of https://www....';
+        }
+
+        if (this.state.preferedAlias !== '') {
+            if (this.state.preferedAlias.length > 7) {
+                errors.push("suggestedAlias");
+                errorMessages['suggestedAlias'] = 'Please Enter an Alias less than 7 Characters';
+            } else if (this.state.preferedAlias.indexOf(' ') >= 0) {
+                errors.push("suggestedAlias");
+                errorMessages['suggestedAlias'] = 'Spaces are not allowed in URLS';
+            }
+
+            var keyExists = await this.checkKeyExists()
+
+            if (keyExists.exists()) {
+                errors.push("suggestedAlias");
+                errorMessages['suggestedAlias'] = 'The Alias you have entered already exists! Please enter another one =-)';
+            }
+        }
+
+        this.setState({
+            errors: errors,
+            errorMessages: errorMessages,
+            loading: false
+        });
+
+        if (errors.length > 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    checkKeyExists = async () => {
+        const dbRef = ref(getDatabase());
+        return get(child(dbRef, `/${this.state.preferedAlias}`)).catch((error) => {
+            return false
+        });
+    }
+
     render() {
         return (
-            <form >
+            <form autoComplete="off">
                 <h3>Mini Link It!</h3>
 
                 <div className="form-group">
                     <label>Enter Your Long URL</label>
-                    <input type="email" className="form-control" placeholder="Enter long URL" />
+                    <input
+                        id="longURL"
+                        onChange={this.handleChange}
+                        value={this.state.longURL}
+                        type="url"
+                        required
+                        className={
+                            this.hasError("longURL")
+                                ? "form-control is-invalid"
+                                : "form-control"
+                        }
+                        placeholder="https://www..."
+                    />
+                </div>
+                <div
+                    className={
+                        this.hasError("longURL") ? "text-danger" : "visually-hidden"
+                    }
+                >
+                    {this.state.errorMessage.longURL}
                 </div>
 
                 <div className="form-group">
-
                     <label htmlFor="basic-url">Your Mini URL</label>
-
                     <div className="input-group mb-3">
                         <div className="input-group-prepend">
-                            <span className="input-group-text" id="basic-addon3">minilinkit.com/</span>
+                            <span className="input-group-text">minilinkit.com/</span>
                         </div>
-                        <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" />
+                        <input
+                            id="preferedAlias"
+                            onChange={this.handleChange}
+                            value={this.state.preferedAlias}
+                            className={
+                                this.hasError("preferedAlias")
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                            }
+                            type="text" placeholder="eg. 3fwias (Optional)"
+                        />
+                    </div>
+                    <div
+                        className={
+                            this.hasError("suggestedAlias") ? "text-danger" : "visually-hidden"
+                        }
+                    >
+                        {this.state.errorMessage.suggestedAlias}
                     </div>
                 </div>
 
-                <button type="submit" className="btn btn-primary btn-block">Mini Link It</button>
+
+                <button className="btn btn-primary" type="button" onClick={this.onSubmit}>
+                    {
+                        this.state.loading ?
+                            <div>
+                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div> :
+                            <div>
+                                <span className="visually-hidden spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                <span>Mini Link It</span>
+                            </div>
+                    }
+
+                </button>
+
+                {
+                    this.state.generatedURL === '' ?
+                        <div></div>
+                        :
+                        <div className="generatedurl">
+                            <span>Your generated URL is <b> {this.state.generatedURL} </b></span>
+                        </div>
+                }
+
             </form>
         );
     }
 }
+
+export default Form;

@@ -13,7 +13,7 @@ body {
   font-family: 'Fira Sans', sans-serif;
 }
 
-h1,h2,h3,h4,h5,h6,label,span {
+h1,h2,h3,h4,h5,h6,label {
   font-weight: 500;
   font-family: 'Fira Sans', sans-serif;
 }
@@ -60,4 +60,12 @@ body, html, .App, #root, .auth-wrapper {
 
 .form-group{
   padding: 10px 0 10px 0;
+}
+
+.generatedurl{
+  margin-top: 20px;
+}
+
+.generatedurl span {
+  font-family: 'Fira Sans', sans-serif;
 }
