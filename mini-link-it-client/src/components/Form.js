@@ -2,10 +2,11 @@ import React from "react";
 import { nanoid } from 'nanoid'
 import { getDatabase, child, ref, set, get } from "firebase/database";
 import { isWebUri } from 'valid-url';
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 
 class Form extends React.Component {
-
 
     constructor(props) {
         super(props);
@@ -15,7 +16,8 @@ class Form extends React.Component {
             generatedURL: '',
             loading: false,
             errors: [],
-            errorMessage: {}
+            errorMessage: {},
+            toolTipMessage: 'Copy To Clip Board'
         };
 
     }
@@ -36,7 +38,6 @@ class Form extends React.Component {
 
         //If the user has input a prefered alias then we use it, if not, we generate one
         var generatedKey = nanoid(5);
-        console.log("The generated key is " + generatedKey)
         var generatedURL = "minilinkit.com/" + generatedKey
 
         if (this.state.preferedAlias !== '') {
@@ -75,6 +76,8 @@ class Form extends React.Component {
             [id]: value
         }))
     }
+
+
 
     validateInput = async () => {
         var errors = [];
@@ -124,6 +127,15 @@ class Form extends React.Component {
             return false
         });
     }
+
+    copyToClipBoard = () => {
+        navigator.clipboard.writeText(this.state.generatedURL)
+        this.setState({
+            toolTipMessage: 'Copied!'
+        })
+    }
+
+
 
     render() {
         return (
@@ -201,7 +213,25 @@ class Form extends React.Component {
                         <div></div>
                         :
                         <div className="generatedurl">
-                            <span>Your generated URL is <b> {this.state.generatedURL} </b></span>
+                            <span>Your generated URL is: </span>
+                            <div className="input-group mb-3">
+                                <input disabled type="text" value={this.state.generatedURL} className="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2" />
+                                <div className="input-group-append">
+                                    <OverlayTrigger
+                                        key={'top'}
+                                        placement={'top'}
+                                        overlay={
+                                            <Tooltip id={`tooltip-${'top'}`}>
+                                                {this.state.toolTipMessage}
+                                            </Tooltip>
+                                        }
+                                    >
+                                        <button onClick={() => this.copyToClipBoard()} data-toggle="tooltip" data-placement="top" title="Tooltip on top" className="btn btn-outline-secondary" type="button">Copy</button>
+
+                                    </OverlayTrigger>
+
+                                </div>
+                            </div>
                         </div>
                 }
 
