@@ -139,103 +139,105 @@ class Form extends React.Component {
 
     render() {
         return (
-            <form autoComplete="off">
-                <h3>Mini Link It!</h3>
+            <div className="container">
+                <form autoComplete="off">
+                    <h3>Mini Link It!</h3>
 
-                <div className="form-group">
-                    <label>Enter Your Long URL</label>
-                    <input
-                        id="longURL"
-                        onChange={this.handleChange}
-                        value={this.state.longURL}
-                        type="url"
-                        required
-                        className={
-                            this.hasError("longURL")
-                                ? "form-control is-invalid"
-                                : "form-control"
-                        }
-                        placeholder="https://www..."
-                    />
-                </div>
-                <div
-                    className={
-                        this.hasError("longURL") ? "text-danger" : "visually-hidden"
-                    }
-                >
-                    {this.state.errorMessage.longURL}
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="basic-url">Your Mini URL</label>
-                    <div className="input-group mb-3">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text">minilinkit.com/</span>
-                        </div>
+                    <div className="form-group">
+                        <label>Enter Your Long URL</label>
                         <input
-                            id="preferedAlias"
+                            id="longURL"
                             onChange={this.handleChange}
-                            value={this.state.preferedAlias}
+                            value={this.state.longURL}
+                            type="url"
+                            required
                             className={
-                                this.hasError("preferedAlias")
+                                this.hasError("longURL")
                                     ? "form-control is-invalid"
                                     : "form-control"
                             }
-                            type="text" placeholder="eg. 3fwias (Optional)"
+                            placeholder="https://www..."
                         />
                     </div>
                     <div
                         className={
-                            this.hasError("suggestedAlias") ? "text-danger" : "visually-hidden"
+                            this.hasError("longURL") ? "text-danger" : "visually-hidden"
                         }
                     >
-                        {this.state.errorMessage.suggestedAlias}
+                        {this.state.errorMessage.longURL}
                     </div>
-                </div>
+
+                    <div className="form-group">
+                        <label htmlFor="basic-url">Your Mini URL</label>
+                        <div className="input-group mb-3">
+                            <div className="input-group-prepend">
+                                <span className="input-group-text">minilinkit.com/</span>
+                            </div>
+                            <input
+                                id="preferedAlias"
+                                onChange={this.handleChange}
+                                value={this.state.preferedAlias}
+                                className={
+                                    this.hasError("preferedAlias")
+                                        ? "form-control is-invalid"
+                                        : "form-control"
+                                }
+                                type="text" placeholder="eg. 3fwias (Optional)"
+                            />
+                        </div>
+                        <div
+                            className={
+                                this.hasError("suggestedAlias") ? "text-danger" : "visually-hidden"
+                            }
+                        >
+                            {this.state.errorMessage.suggestedAlias}
+                        </div>
+                    </div>
 
 
-                <button className="btn btn-primary" type="button" onClick={this.onSubmit}>
+                    <button className="btn btn-primary" type="button" onClick={this.onSubmit}>
+                        {
+                            this.state.loading ?
+                                <div>
+                                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                </div> :
+                                <div>
+                                    <span className="visually-hidden spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    <span>Mini Link It</span>
+                                </div>
+                        }
+
+                    </button>
+
                     {
-                        this.state.loading ?
-                            <div>
-                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div> :
-                            <div>
-                                <span className="visually-hidden spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                <span>Mini Link It</span>
+                        this.state.generatedURL === '' ?
+                            <div></div>
+                            :
+                            <div className="generatedurl">
+                                <span>Your generated URL is: </span>
+                                <div className="input-group mb-3">
+                                    <input disabled type="text" value={this.state.generatedURL} className="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2" />
+                                    <div className="input-group-append">
+                                        <OverlayTrigger
+                                            key={'top'}
+                                            placement={'top'}
+                                            overlay={
+                                                <Tooltip id={`tooltip-${'top'}`}>
+                                                    {this.state.toolTipMessage}
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <button onClick={() => this.copyToClipBoard()} data-toggle="tooltip" data-placement="top" title="Tooltip on top" className="btn btn-outline-secondary" type="button">Copy</button>
+
+                                        </OverlayTrigger>
+
+                                    </div>
+                                </div>
                             </div>
                     }
 
-                </button>
-
-                {
-                    this.state.generatedURL === '' ?
-                        <div></div>
-                        :
-                        <div className="generatedurl">
-                            <span>Your generated URL is: </span>
-                            <div className="input-group mb-3">
-                                <input disabled type="text" value={this.state.generatedURL} className="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2" />
-                                <div className="input-group-append">
-                                    <OverlayTrigger
-                                        key={'top'}
-                                        placement={'top'}
-                                        overlay={
-                                            <Tooltip id={`tooltip-${'top'}`}>
-                                                {this.state.toolTipMessage}
-                                            </Tooltip>
-                                        }
-                                    >
-                                        <button onClick={() => this.copyToClipBoard()} data-toggle="tooltip" data-placement="top" title="Tooltip on top" className="btn btn-outline-secondary" type="button">Copy</button>
-
-                                    </OverlayTrigger>
-
-                                </div>
-                            </div>
-                        </div>
-                }
-
-            </form>
+                </form>
+            </div>
         );
     }
 }
