@@ -5,7 +5,7 @@ import os
 
 cred_obj = firebase_admin.credentials.Certificate('./ServiceAccountKey.json')
 default_app = firebase_admin.initialize_app(cred_obj,  {
-	'databaseURL': 'https://mini-link-it-default-rtdb.firebaseio.com/'
+	'databaseURL': ''
 	})
 
 app = Flask(__name__, static_folder='./build/static', template_folder="./build" )
