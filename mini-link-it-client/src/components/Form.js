@@ -37,6 +37,7 @@ class Form extends React.Component {
         }
 
         //If the user has input a prefered alias then we use it, if not, we generate one
+        //Be sure to change minilinkit.com to your domain
         var generatedKey = nanoid(5);
         var generatedURL = "minilinkit.com/" + generatedKey
 
@@ -63,6 +64,7 @@ class Form extends React.Component {
         })
     };
 
+    //Checks if feild has an error
     hasError = (key) => {
         return this.state.errors.indexOf(key) !== -1;
     }
