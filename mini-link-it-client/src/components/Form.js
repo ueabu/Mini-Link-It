@@ -84,6 +84,8 @@ class Form extends React.Component {
     validateInput = async () => {
         var errors = [];
         var errorMessages = this.state.errorMessage
+
+        //Validate Long URL
         if (this.state.longURL.length === 0) {
             errors.push("longURL");
             errorMessages['longURL'] = 'Please enter your URL!';
@@ -92,6 +94,7 @@ class Form extends React.Component {
             errorMessages['longURL'] = 'Please a URL in the form of https://www....';
         }
 
+        //Prefered Alias
         if (this.state.preferedAlias !== '') {
             if (this.state.preferedAlias.length > 7) {
                 errors.push("suggestedAlias");
