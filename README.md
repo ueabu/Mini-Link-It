@@ -1,9 +1,9 @@
 # Mini-Link-It
 A URL Shortener Application build with React JS, Python Flask, Firebase Data Base and Heroku.
 
-Project Video: (Coming)
-React Client App: (Coming)
-Flask Server and Heroku Deployment: (Coming)
+## Project Video
+1. React Client App: (Coming)
+2. Flask Server and Heroku Deployment: (Coming)
 
 The project is composed of two folders, mini-link-it-client and mini-link-it-server
 
@@ -16,9 +16,9 @@ mini url.
 2. Firebase Database in Project Account
 3. Firebase config in index.js line 9. See this video on how to generate your own config.
 
-### Running Locally
-`npm install` To install dependencies (Be sure you have a firebase account)
-`npm start`
+### Running client Locally
+1. `npm install` To install dependencies (Be sure you have a firebase account)
+2. `npm start`
 
 ## mini-link-it-server
 This is a python flask web server that listens for calls made with the generated URL, goes to the database, fetches the long URL then redirects the user to the
