@@ -1,9 +1,9 @@
 # Mini-Link-It
 A URL Shortener Application build with React JS, Python Flask, Firebase Data Base and Heroku.
 
-## Project Video
-1. React Client App: (Coming)
-2. Flask Server and Heroku Deployment: (Coming)
+## Project Videos
+1. React Client App: https://youtu.be/LGdIDm-4Dv8
+2. Flask Server and Heroku Deployment: https://youtu.be/OX4IBcoKVfg
 
 The project is composed of two folders, mini-link-it-client and mini-link-it-server
 
