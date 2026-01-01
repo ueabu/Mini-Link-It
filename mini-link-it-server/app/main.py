@@ -2,10 +2,13 @@ from flask import Flask, redirect, render_template
 import firebase_admin
 from firebase_admin import db
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 cred_obj = firebase_admin.credentials.Certificate('./ServiceAccountKey.json')
 default_app = firebase_admin.initialize_app(cred_obj,  {
-	'databaseURL': ''
+	'databaseURL': os.getenv('DATABASE_URL')
 	})
 
 app = Flask(__name__, static_folder='./build/static', template_folder="./build" )
